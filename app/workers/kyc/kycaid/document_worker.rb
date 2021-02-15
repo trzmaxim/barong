@@ -22,6 +22,11 @@ module KYC
         document = ::KYCAID::Document.create(document_params(front_file, back_file))
         selfie_document = ::KYCAID::Document.create(selfie_image_params(selfie_file))
 
+        Rails.logger.info(@user)
+        Rails.logger.info(@applicant_id)
+        Rails.logger.info(document)
+        Rails.logger.info(selfie_document)
+
         if document.error || document.errors || selfie_document.error || selfie_document.errors
           Rails.logger.info("Error in document creation for: #{@user.uid}: #{document.error} #{document.errors} \
                              or in  selfie image creation for: #{@user.uid}: #{selfie_document.error} #{selfie_document.errors}")
@@ -31,6 +36,8 @@ module KYC
           back_file&.update(metadata: { document_id: document.document_id }.to_json)
           selfie_file&.update(metadata: { document_id: selfie_document.document_id }.to_json)
           verification = ::KYCAID::Verification.create(verification_params)
+
+          Rails.logger.info(verification)
 
           if verification.error || verification.errors
             Rails.logger.info("Error in verification creation for: #{@user.uid}: #{verification.error} #{verification.errors}")
