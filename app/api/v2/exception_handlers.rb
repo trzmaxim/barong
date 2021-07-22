@@ -19,7 +19,7 @@ module API
           end
 
           rescue_from Peatio::Auth::Error do |e|
-            # report_exception(e)
+            report_exception(e) unless Rails.env.production?
             error!({ errors: ['jwt.decode_and_verify'] }, 401)
           end
 
